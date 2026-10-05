@@ -75,7 +75,7 @@ function drawBars(canvas, series, keys, colors) {
   const c = canvas.getContext('2d'), W = canvas.width = canvas.clientWidth * 2, H = canvas.height = 440; c.scale(1, 1);
   const max = Math.max(1, ...series.flatMap(s => keys.map(k => +s[k] || 0))); const pad = 40, bw = (W - pad * 2) / series.length;
   c.font = '20px Tahoma'; c.textAlign = 'center';
-  series.forEach((s, i) => { keys.forEach((k, j) => { const h = (+s[k] || 0) / max * (H - 90); const x = W - pad - (i + 1) * bw + j * (bw / keys.length / 1.2) + 8; c.fillStyle = colors[j]; c.fillRect(x, H - 50 - h, bw / keys.length / 1.3, h); }); c.fillStyle = '#6b7689'; c.fillText(s.month.slice(5), W - pad - (i + .5) * bw, H - 20); });
+  series.forEach((s, i) => { keys.forEach((k, j) => { const h = (+s[k] || 0) / max * (H - 90); const x = W - pad - (i + 1) * bw + j * (bw / keys.length / 1.2) + 8; c.fillStyle = colors[j]; c.fillRect(x, H - 50 - h, bw / keys.length / 1.3, h); }); c.fillStyle = '#7a6c70'; c.fillText(s.month.slice(5), W - pad - (i + .5) * bw, H - 20); });
 }
 
 /* ---------- لوحة التحكم ---------- */
@@ -98,14 +98,14 @@ VIEWS.dashboard = async () => {
     ${kpi('يحتاج انتباهك', s.expiring_60 + ' / ' + s.open_maintenance, s.expiring_60 + s.open_maintenance > 0 ? 'warn' : 'good', 'عقود تنتهي قريبًا / بلاغات مفتوحة')}
   </div>
   <div class="grid2" style="margin-top:14px">
-    <div class="card"><h3>التحصيل مقابل المستحق والمصروفات — 12 شهرًا</h3><canvas id="chart"></canvas><div class="small muted" style="display:flex;gap:14px;margin-top:8px"><span>■ <span style="color:#2d5bb3">المستحق</span></span><span>■ <span style="color:#0f9d6e">المحصّل</span></span><span>■ <span style="color:#c93838">المصروفات</span></span></div></div>
+    <div class="card"><h3>التحصيل مقابل المستحق والمصروفات — 12 شهرًا</h3><canvas id="chart"></canvas><div class="small muted" style="display:flex;gap:14px;margin-top:8px"><span>■ <span style="color:#7a6c70">المستحق</span></span><span>■ <span style="color:#0f9d6e">المحصّل</span></span><span>■ <span style="color:#c93838">المصروفات</span></span></div></div>
     <div class="card" id="alerts"><h3>التنبيهات (${alerts.length})</h3><div style="max-height:300px;overflow:auto">${alerts.length ? alerts.map(a => `<div class="alert ${a.level}" onclick="go('${a.link}')"><div><b>${a.type}</b><small>${esc(a.text)}</small></div></div>`).join('') : '<div class="empty">لا تنبيهات 🎉</div>'}</div></div>
   </div>
   <div class="grid2" style="margin-top:14px">
     <div class="card"><h3>مرشحون للاستبدال (${s.replacement.length})</h3>${s.replacement.length ? s.replacement.slice(0, 6).map(r => `<div class="kv"><span><b>${esc(r.name)}</b> <span class="muted small">${r.reasons.join(' · ')}</span></span><span class="num">${r.yield}%</span></div>`).join('') : '<div class="empty">لا شيء وفق القاعدة الحالية</div>'}<button class="btn sm" style="margin-top:8px" onclick="go('growth')">عرض الكل</button></div>
     <div class="card"><h3>ملخص ذكي</h3><div id="aiSummary" class="muted">جارٍ التحليل…</div></div>
   </div>`;
-  drawBars($('#chart'), s.series, ['due', 'collected', 'expenses'], ['#2d5bb3', '#0f9d6e', '#c93838']);
+  drawBars($('#chart'), s.series, ['due', 'collected', 'expenses'], ['#9a8f92', '#0f9d6e', '#c93838']);
   api('assistant', 'POST', { q: 'ملخص المحفظة' }).then(r => $('#aiSummary').innerHTML = `<div style="white-space:pre-wrap;line-height:1.7;color:var(--ink)">${esc(r.answer)}</div>`).catch(() => { });
 };
 
@@ -290,7 +290,7 @@ VIEWS.portal = async () => {
   let d; try { d = await api('portal'); } catch (e) { $('#view').innerHTML = `<div class="card"><h3>حسابك غير مرتبط بعد</h3><p>لم تربط الإدارة حسابك بسجل مستأجر. تواصل مع ${esc(cache.settings.owner_name || 'الإدارة')}.</p></div>`; return; }
   const c = d.contract, dl = c ? Math.floor((new Date(c.end_date) - Date.now()) / 864e5) : null;
   $('#view').innerHTML = `
-  <div class="card" style="background:linear-gradient(135deg,#17305e,#2d5bb3);color:#fff"><h2 style="margin:0 0 4px">أهلًا ${esc(d.tenant.name)} 👋</h2><div style="opacity:.85">${c ? `وحدتك: <b>${esc(c.property_name)}</b> — ${esc(c.city)} ${esc(c.district)} · عقد ${esc(c.frequency)} ينتهي ${c.end_date} (${dl} يوم)` : 'لا يوجد عقد ساري حاليًا'}</div></div>
+  <div class="card" style="background:linear-gradient(135deg,#4a0d1b,#8b1a2f);color:#fff"><h2 style="margin:0 0 4px">أهلًا ${esc(d.tenant.name)} 👋</h2><div style="opacity:.85">${c ? `وحدتك: <b>${esc(c.property_name)}</b> — ${esc(c.city)} ${esc(c.district)} · عقد ${esc(c.frequency)} ينتهي ${c.end_date} (${dl} يوم)` : 'لا يوجد عقد ساري حاليًا'}</div></div>
   <div class="grid" style="margin-top:14px">${kpi('الإيجار الشهري', c ? money(c.rent) : '—')}${kpi('الاستحقاق القادم', d.next ? money(d.next.remaining) : '—', d.next && d.next.status === 'متأخر' ? 'bad' : '', d.next ? 'بتاريخ ' + d.next.due_date + ' · ' + d.next.status : 'لا مستحقات')}${kpi('المتأخرات', money(d.overdue), d.overdue > 0 ? 'bad' : 'good')}${kpi('إجمالي ما دفعته', money(d.total_paid), 'good')}</div>
   ${d.overdue > 0 ? `<div class="notice" style="background:#fde3e3;color:#9c2222;margin-top:12px">⚠️ لديك متأخرات بقيمة <b>${money(d.overdue)}</b>. يرجى السداد والتواصل مع ${esc(d.owner_name)} لإرسال الإيصال.</div>` : ''}
   <div class="grid2" style="margin-top:14px">
