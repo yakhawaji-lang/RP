@@ -5,6 +5,7 @@ $CFG = require __DIR__ . '/config.php';
 function db(): PDO {
   static $pdo = null;
   global $CFG;
+  if (!empty($GLOBALS['PDO_OVERRIDE'])) return $GLOBALS['PDO_OVERRIDE'];
   if ($pdo) return $pdo;
   $opts = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC];
   $driver = $CFG['driver'];
@@ -21,7 +22,8 @@ function db(): PDO {
     }
   }
   if ($driver === 'sqlite') {
-    @mkdir(dirname($CFG['sqlite_path']), 0777, true);
+    $dir = dirname($CFG['sqlite_path']); @mkdir($dir, 0775, true);
+    if (!file_exists("$dir/.htaccess")) @file_put_contents("$dir/.htaccess", "<IfModule mod_authz_core.c>\n  Require all denied\n</IfModule>\n<IfModule !mod_authz_core.c>\n  Deny from all\n</IfModule>\n");
     $pdo = new PDO('sqlite:' . $CFG['sqlite_path'], null, null, $opts);
     $pdo->exec('PRAGMA foreign_keys=ON');
   }

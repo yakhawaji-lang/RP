@@ -10,6 +10,7 @@ require __DIR__ . '/db.php';
 require __DIR__ . '/logic.php';
 require __DIR__ . '/assistant.php';
 require __DIR__ . '/auth.php';
+require __DIR__ . '/setup.php';
 
 function out($data, int $code = 200): void { http_response_code($code); echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); exit; }
 function body(): array { $j = json_decode(file_get_contents('php://input') ?: '[]', true); return is_array($j) ? $j : []; }
@@ -41,7 +42,8 @@ try {
   if ($res === '' || $res === 'health') out(['ok' => true, 'driver' => $GLOBALS['DB_DRIVER'], 'time' => date('c')]);
   auth_install(); if (!current_user()) out(['error' => 'يلزم تسجيل الدخول', 'auth' => false], 401);
   $isWrite = $method !== 'GET';
-  if ($res === 'users') { $r = users_route($id, $method, body()); $code = $r['_code'] ?? 200; unset($r['_code']); out($r, $code); }
+  if ($res === 'setup') { $r = setup_route($method, body(), $FIELDS); $code = $r['_code'] ?? 200; unset($r['_code']); out($r, $code); }
+  if ($res === 'users') { $r = users_route($id, $method, body(), $sub); $code = $r['_code'] ?? 200; unset($r['_code']); out($r, $code); }
   if ($res === 'portal') { $r = portal_route($method, body(), $sub); $code = $r['_code'] ?? 200; unset($r['_code']); out($r, $code); }
   // المستأجر لا يصل إلا لبوابته وبلاغات صيانته
   if (current_user()['role'] === 'tenant' && $res !== 'maintenance') require_can('portal');

@@ -29,8 +29,9 @@ const DEMO_USERS = [
 ];
 const DEMO_PASSWORD = '123456';
 
-function auth_install(): void {
-  static $done = false; if ($done) return; $done = true;
+function demo_enabled(): bool { return setting('demo_enabled', '1') === '1'; }
+function auth_install(bool $force = false): void {
+  static $done = false; if ($done && !$force) return; $done = true;
   $driver = $GLOBALS['DB_DRIVER']; $pdo = db();
   $id = $driver === 'mysql' ? 'INT AUTO_INCREMENT PRIMARY KEY' : 'INTEGER PRIMARY KEY AUTOINCREMENT';
   $tail = $driver === 'mysql' ? ' ENGINE=InnoDB DEFAULT CHARSET=utf8mb4' : '';
@@ -39,7 +40,7 @@ function auth_install(): void {
   $cols = $driver === 'mysql' ? array_column($pdo->query("SHOW COLUMNS FROM users")->fetchAll(), 'Field') : array_column($pdo->query("PRAGMA table_info(users)")->fetchAll(), 'name');
   if (!in_array('tenant_id', $cols)) $pdo->exec("ALTER TABLE users ADD COLUMN tenant_id INT NULL");
   if (!in_array('active', $cols)) $pdo->exec("ALTER TABLE users ADD COLUMN active TINYINT DEFAULT 1");
-  if (users_count() === 0) seed_demo_users();
+  if (users_count() === 0 && demo_enabled()) seed_demo_users();
 }
 function seed_demo_users(): void {
   $pdo = db(); $st = $pdo->prepare("INSERT INTO users (name, email, password_hash, role, tenant_id, onboarded) VALUES (?,?,?,?,?,1)");
@@ -63,7 +64,7 @@ function require_can(string $res, bool $write = false): void { if (!can($res, $w
 function auth_route(string $action, string $method, array $b): array {
   auth_install(); session_boot(); $pdo = db();
   switch ($action) {
-    case 'status': return ['has_users' => users_count() > 0, 'user' => current_user(), 'demo' => array_map(fn($d) => ['email' => $d['email'], 'role' => $d['role'], 'label' => ROLES[$d['role']], 'name' => $d['name']], DEMO_USERS), 'demo_password' => DEMO_PASSWORD, 'roles' => ROLES];
+    case 'status': return ['has_users' => users_count() > 0, 'user' => current_user(), 'demo' => demo_enabled() ? array_map(fn($d) => ['email' => $d['email'], 'role' => $d['role'], 'label' => ROLES[$d['role']], 'name' => $d['name']], DEMO_USERS) : [], 'demo_password' => demo_enabled() ? DEMO_PASSWORD : '', 'roles' => ROLES];
     case 'me': $u = current_user(); if (!$u) return ['error' => 'غير مسجل الدخول', 'auth' => false, '_code' => 401]; return $u;
     case 'register':
       $name = trim($b['name'] ?? ''); $email = mb_strtolower(trim($b['email'] ?? '')); $pass = (string)($b['password'] ?? '');
@@ -98,8 +99,14 @@ function auth_route(string $action, string $method, array $b): array {
 }
 
 // إدارة المستخدمين (المالك فقط للكتابة)
-function users_route(?int $id, string $method, array $b): array {
+function users_route(?int $id, string $method, array $b, ?string $sub = null): array {
   $pdo = db();
+  if ($method === 'POST' && $sub === 'disable_demo') {
+    require_can('users', true); $me = current_user();
+    if (str_ends_with($me['email'], '@demo.sa')) return ['error' => 'أنشئ حساب مالك حقيقي (ببريدك وكلمة مرور قوية) وسجّل الدخول به، ثم عطّل الحسابات التجريبية من هناك', '_code' => 400];
+    $pdo->exec("DELETE FROM users WHERE email LIKE '%@demo.sa'"); set_setting('demo_enabled', '0');
+    audit('update', 'users', 0, 'تعطيل الحسابات التجريبية'); return ['ok' => true];
+  }
   if ($method === 'GET') { require_can('users'); $rows = $pdo->query("SELECT u.id, u.name, u.email, u.phone, u.role, u.tenant_id, u.active, u.last_login, u.created_at, t.name tenant_name FROM users u LEFT JOIN tenants t ON t.id=u.tenant_id ORDER BY u.id")->fetchAll(); foreach ($rows as &$r) $r['role_label'] = ROLES[$r['role']] ?? $r['role']; return $rows; }
   require_can('users', true); $me = current_user();
   if ($method === 'POST' && !$id) {
@@ -108,7 +115,7 @@ function users_route(?int $id, string $method, array $b): array {
     if (strlen($b['password'] ?? '') < 6) return ['error' => 'كلمة المرور 6 أحرف على الأقل', '_code' => 400];
     $st = $pdo->prepare("SELECT id FROM users WHERE email=?"); $st->execute([$email]); if ($st->fetch()) return ['error' => 'البريد مسجل مسبقًا', '_code' => 409];
     $pdo->prepare("INSERT INTO users (name, email, phone, password_hash, role, tenant_id, onboarded) VALUES (?,?,?,?,?,?,1)")->execute([trim($b['name'] ?? ''), $email, trim($b['phone'] ?? ''), password_hash($b['password'], PASSWORD_DEFAULT), $b['role'], $b['role'] === 'tenant' ? ((int)($b['tenant_id'] ?? 0) ?: null) : null]);
-    audit('create', 'users', (int)$pdo->lastInsertId(), $email); return ['ok' => true, 'id' => (int)$pdo->lastInsertId()];
+    $newId = (int)$pdo->lastInsertId(); audit('create', 'users', $newId, $email); return ['ok' => true, 'id' => $newId];
   }
   if (($method === 'PUT' || $method === 'POST') && $id) {
     if ($id === (int)$me['id'] && isset($b['role']) && $b['role'] !== 'owner') return ['error' => 'لا يمكنك تغيير دورك أنت', '_code' => 400];

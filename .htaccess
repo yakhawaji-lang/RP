@@ -1,6 +1,7 @@
-# منع الوصول لملفات الإعداد والبيانات
-<FilesMatch "^(config\.local\.php|config\.php)$">
+# حماية ملفات الإعداد والبيانات
+<FilesMatch "^config(\.local)?(\.example)?\.php$">
   Require all denied
 </FilesMatch>
-RedirectMatch 404 ^/.*/data/
-RedirectMatch 404 /\.git
+RedirectMatch 404 (^|/)data(/|$)
+RedirectMatch 404 (^|/)\.git
+Options -Indexes
