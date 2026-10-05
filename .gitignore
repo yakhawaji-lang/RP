@@ -1,4 +1,5 @@
 data/
 *.sqlite
+api/config.local.php
 .DS_Store
 Thumbs.db

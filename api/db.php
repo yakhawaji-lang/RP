@@ -10,11 +10,14 @@ function db(): PDO {
   $driver = $CFG['driver'];
   if ($driver === 'mysql') {
     try {
-      $root = new PDO("mysql:host={$CFG['host']};port={$CFG['port']};charset=utf8mb4", $CFG['user'], $CFG['pass'], $opts);
-      $root->exec("CREATE DATABASE IF NOT EXISTS `{$CFG['dbname']}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+      // الاتصال المباشر أولًا (الاستضافات المشتركة مثل Hostinger تنشئ القاعدة من لوحة التحكم)
       $pdo = new PDO("mysql:host={$CFG['host']};port={$CFG['port']};dbname={$CFG['dbname']};charset=utf8mb4", $CFG['user'], $CFG['pass'], $opts);
-    } catch (Throwable $e) {
-      $driver = 'sqlite'; // احتياطي إذا لم تعمل MySQL
+    } catch (Throwable $e1) {
+      try { // محليًا (XAMPP): أنشئ القاعدة إن لم توجد
+        $root = new PDO("mysql:host={$CFG['host']};port={$CFG['port']};charset=utf8mb4", $CFG['user'], $CFG['pass'], $opts);
+        $root->exec("CREATE DATABASE IF NOT EXISTS `{$CFG['dbname']}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+        $pdo = new PDO("mysql:host={$CFG['host']};port={$CFG['port']};dbname={$CFG['dbname']};charset=utf8mb4", $CFG['user'], $CFG['pass'], $opts);
+      } catch (Throwable $e2) { $driver = 'sqlite'; } // احتياطي إذا لم تعمل MySQL
     }
   }
   if ($driver === 'sqlite') {
