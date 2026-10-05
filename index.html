@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>محفظتي العقارية — إدارة عقاراتك المؤجرة بذكاء</title>
+<meta name="description" content="نظام متكامل لإدارة المحافظ العقارية المؤجرة: الوحدات، العقود، التحصيل، الصيانة، التمويل، التقارير، ومساعد ذكي يحلل محفظتك.">
+<style>
+:root{--brand:#17305e;--brand2:#2d5bb3;--accent:#0f9d6e;--ink:#16213a;--muted:#5f6b80;--bg:#f6f8fc;--line:#e3e8f0}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:"Segoe UI",Tahoma,Arial,sans-serif;color:var(--ink);background:#fff;line-height:1.7}
+a{color:inherit;text-decoration:none}.wrap{max-width:1140px;margin:auto;padding:0 20px}
+.btn{display:inline-block;padding:12px 22px;border-radius:12px;font-weight:600;border:1px solid var(--line);background:#fff;cursor:pointer;font:inherit}.btn.primary{background:var(--brand2);border-color:var(--brand2);color:#fff}.btn.primary:hover{background:var(--brand)}.btn.ghost{background:transparent;border-color:#ffffff55;color:#fff}.btn.lg{padding:15px 30px;font-size:17px}
+header{position:sticky;top:0;background:#ffffffee;backdrop-filter:blur(8px);border-bottom:1px solid var(--line);z-index:9}.nav{display:flex;align-items:center;justify-content:space-between;height:66px}.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px}.logo span{font-size:26px}.links{display:flex;gap:22px;color:var(--muted);font-size:15px}.links a:hover{color:var(--brand2)}.navcta{display:flex;gap:8px}
+.hero{background:radial-gradient(1200px 500px at 80% -10%,#2d5bb355,transparent),linear-gradient(180deg,#17305e,#1f3b73);color:#fff;padding:80px 0 60px}.hero .wrap{display:grid;grid-template-columns:1.1fr 1fr;gap:40px;align-items:center}.hero h1{font-size:44px;line-height:1.3;margin:0 0 16px}.hero h1 em{font-style:normal;color:#8fd3b7}.hero p{font-size:18px;color:#d7e1f3;margin:0 0 26px}.hero .actions{display:flex;gap:10px;flex-wrap:wrap}.hero .trust{margin-top:22px;font-size:13px;color:#b9c6df;display:flex;gap:18px;flex-wrap:wrap}
+.mock{background:#fff;border-radius:18px;padding:16px;box-shadow:0 30px 60px #0005;color:var(--ink);transform:rotate(-1.5deg)}.mock .bar{display:flex;gap:6px;margin-bottom:12px}.mock .bar i{width:10px;height:10px;border-radius:50%;background:#e3e8f0;display:block}.mock .k{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.mock .k div{background:var(--bg);border-radius:10px;padding:10px}.mock .k small{color:var(--muted);font-size:11px;display:block}.mock .k b{font-size:17px}.mock .chart{display:flex;align-items:flex-end;gap:6px;height:90px;margin-top:12px;padding:0 4px}.mock .chart i{flex:1;background:linear-gradient(180deg,#2d5bb3,#8fb3ec);border-radius:4px 4px 0 0;display:block}.mock .ai{margin-top:12px;background:#eef6f2;border-radius:10px;padding:10px;font-size:12px;border-right:3px solid var(--accent)}
+section{padding:70px 0}section.alt{background:var(--bg)}h2{font-size:32px;margin:0 0 10px;text-align:center}.sub{text-align:center;color:var(--muted);max-width:640px;margin:0 auto 40px;font-size:17px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px}.card .ic{font-size:30px;margin-bottom:8px}.card h3{margin:0 0 6px;font-size:18px}.card p{margin:0;color:var(--muted);font-size:15px}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;counter-reset:s}.step{background:#fff;border-radius:16px;padding:22px;border:1px solid var(--line);position:relative}.step:before{counter-increment:s;content:counter(s);position:absolute;top:-14px;right:18px;background:var(--brand2);color:#fff;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:700}.step h3{margin:8px 0 4px;font-size:17px}.step p{margin:0;color:var(--muted);font-size:14px}
+.ai-sec .wrap{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}.ai-sec h2{text-align:right}.ai-sec ul{padding:0;list-style:none;margin:0}.ai-sec li{padding:10px 0;border-bottom:1px dashed var(--line)}.ai-sec li b{display:block}.ai-sec li span{color:var(--muted);font-size:14px}.chat{background:#fff;border-radius:16px;border:1px solid var(--line);padding:16px;box-shadow:0 10px 30px #0f1f4a14}.chat .m{padding:10px 14px;border-radius:14px;margin:8px 0;font-size:14px;max-width:88%;white-space:pre-line}.chat .u{background:var(--brand2);color:#fff;margin-left:auto}.chat .b{background:var(--bg)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;text-align:center}.stats div{background:#fff;border-radius:16px;padding:20px;border:1px solid var(--line)}.stats b{font-size:30px;color:var(--brand2);display:block}.stats span{color:var(--muted);font-size:14px}
+.faq details{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:10px}.faq summary{cursor:pointer;font-weight:600}.faq p{margin:8px 0 0;color:var(--muted)}
+.cta{background:linear-gradient(135deg,#17305e,#2d5bb3);color:#fff;text-align:center;border-radius:24px;padding:50px 20px}.cta h2{color:#fff}.cta p{color:#d7e1f3;margin-bottom:20px}
+footer{padding:30px 0;color:var(--muted);font-size:14px;border-top:1px solid var(--line);text-align:center}
+@media(max-width:900px){.hero .wrap,.ai-sec .wrap{grid-template-columns:1fr}.hero h1{font-size:32px}.grid,.steps,.stats{grid-template-columns:1fr 1fr}.links{display:none}.mock{transform:none}}
+@media(max-width:560px){.grid,.steps,.stats{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="wrap nav"><a class="logo" href="#"><span>🏠</span>محفظتي العقارية</a><nav class="links"><a href="#features">المميزات</a><a href="#how">كيف يعمل</a><a href="#ai">الذكاء الاصطناعي</a><a href="#faq">الأسئلة</a></nav><div class="navcta"><a class="btn" href="login.html">تسجيل الدخول</a><a class="btn primary" href="login.html#register">ابدأ مجانًا</a></div></div></header>
+
+<section class="hero"><div class="wrap">
+  <div>
+    <h1>أدر محفظتك العقارية المؤجرة <em>من مكان واحد</em> — بذكاء</h1>
+    <p>الوحدات، المستأجرون، العقود، التحصيل، الصيانة، التمويل، والتقارير… كلها مترابطة، ومعها مساعد ذكي يقرأ أرقامك ويقترح القرار.</p>
+    <div class="actions"><a class="btn primary lg" href="login.html#register">أنشئ حسابك الآن</a><a class="btn ghost lg" href="#how">شاهد كيف يعمل</a></div>
+    <div class="trust"><span>✓ عربي بالكامل</span><span>✓ بياناتك على خادمك</span><span>✓ يعمل على الجوال والحاسب</span><span>✓ جاهز للربط مع إيجار</span></div>
+  </div>
+  <div class="mock"><div class="bar"><i></i><i></i><i></i></div>
+    <div class="k"><div><small>نسبة الإشغال</small><b>92%</b></div><div><small>التحصيل هذا الشهر</small><b>96%</b></div><div><small>المتأخرات</small><b style="color:#c93838">4,200</b></div><div><small>NOI سنوي</small><b>642,600</b></div><div><small>Cap Rate</small><b>5.8%</b></div><div><small>DSCR</small><b>2.6</b></div></div>
+    <div class="chart"><i style="height:50%"></i><i style="height:62%"></i><i style="height:58%"></i><i style="height:70%"></i><i style="height:66%"></i><i style="height:80%"></i><i style="height:76%"></i><i style="height:88%"></i><i style="height:84%"></i><i style="height:95%"></i><i style="height:90%"></i><i style="height:100%"></i></div>
+    <div class="ai">✨ <b>المساعد:</b> 3 عقود تنتهي خلال 45 يومًا، وشقة 12 متأخرة شهرين — أقترح إرسال تذكير اليوم وبدء التفاوض على التجديد.</div>
+  </div>
+</div></section>
+
+<section id="features"><div class="wrap">
+  <h2>كل ما تحتاجه لإدارة العقار المؤجر</h2><p class="sub">نظام واحد يربط كل شيء ببعضه: الوحدة بالعقد، والعقد بالاستحقاقات، والاستحقاق بالتحصيل — فتظهر الأرقام الحقيقية تلقائيًا.</p>
+  <div class="grid">
+    <div class="card"><div class="ic">🏢</div><h3>الوحدات والعقارات</h3><p>ملف لكل وحدة: الصك، القيمة، العائد، والسجل الكامل للعقود والمصروفات والصيانة.</p></div>
+    <div class="card"><div class="ic">📄</div><h3>العقود والاستحقاقات</h3><p>جدول الاستحقاقات يتولّد تلقائيًا حسب دورية الدفع، مع تجديد وإنهاء بضغطة، ورقم عقد إيجار.</p></div>
+    <div class="card"><div class="ic">💰</div><h3>التحصيل والمتأخرات</h3><p>سجّل الدفعة فتُوزَّع على الاستحقاقات، وتُحسب المتأخرات وأعمارها تلقائيًا، مع سند قبض جاهز للطباعة.</p></div>
+    <div class="card"><div class="ic">🔧</div><h3>الصيانة والمصروفات</h3><p>بلاغات بأولويات وحالات، وعند الإغلاق تُرحَّل التكلفة إلى مصروفات الوحدة فورًا.</p></div>
+    <div class="card"><div class="ic">🏦</div><h3>التمويل</h3><p>الرصيد والأقساط لكل تمويل، ومؤشرات LTV وDSCR تخبرك بهامش الأمان في محفظتك.</p></div>
+    <div class="card"><div class="ic">📈</div><h3>التوسع والاستبدال</h3><p>قاعدة ذكية ترشّح الوحدات الضعيفة للبيع، ومحاكاة «ماذا لو» لأي شراء بتمويل قبل أن تقرر.</p></div>
+    <div class="card"><div class="ic">📑</div><h3>تقارير جاهزة</h3><p>ربح وخسارة لكل وحدة، متأخرات، عقود تنتهي، تدفق نقدي 12 شهرًا، تقدير زكاة — طباعة وتصدير CSV.</p></div>
+    <div class="card"><div class="ic">🔔</div><h3>تنبيهات تسبق المشكلة</h3><p>استحقاقات قريبة، متأخرات، عقود تنتهي، صيانة مفتوحة، وحدات شاغرة — في مكان واحد.</p></div>
+    <div class="card"><div class="ic">🔒</div><h3>بياناتك ملكك</h3><p>يعمل على خادمك الخاص، مع نسخ احتياطي واستعادة بضغطة، وسجل تدقيق لكل عملية.</p></div>
+  </div>
+</div></section>
+
+<section id="how" class="alt"><div class="wrap">
+  <h2>كيف يعمل؟</h2><p class="sub">أربع خطوات وتكون محفظتك تحت السيطرة.</p>
+  <div class="steps">
+    <div class="step"><h3>أنشئ حسابك</h3><p>دقيقة واحدة: اسمك وبريدك وكلمة مرور.</p></div>
+    <div class="step"><h3>أضف وحداتك</h3><p>يدويًا، أو استورد بياناتك، أو جرّب ببيانات تجريبية.</p></div>
+    <div class="step"><h3>سجّل العقود</h3><p>اربط كل وحدة بمستأجرها وتاريخ عقدها فتتولّد الاستحقاقات.</p></div>
+    <div class="step"><h3>تابع وقرّر</h3><p>لوحة التحكم والتنبيهات والمساعد الذكي يخبرونك بما يستحق انتباهك.</p></div>
+  </div>
+</div></section>
+
+<section id="ai" class="ai-sec"><div class="wrap">
+  <div>
+    <h2>مساعد ذكي يعرف محفظتك</h2>
+    <ul>
+      <li><b>اسأل بالعربية</b><span>«كم المتأخرات؟» «أضعف الوحدات؟» «ماذا لو اشتريت وحدة بـ 500 ألف؟»</span></li>
+      <li><b>ملخص ذكي يومي</b><span>ما تغيّر، وما يحتاج انتباهك، وأول قرار مقترح.</span></li>
+      <li><b>توصيات بيع / احتفاظ / استبدال</b><span>لكل وحدة مع السبب والأثر على المحفظة.</span></li>
+      <li><b>صياغة الرسائل</b><span>تذكير سداد أو إشعار تجديد جاهز للإرسال عبر واتساب.</span></li>
+      <li><b>محاكاة السيناريوهات</b><span>شراء بتمويل، بيع الوحدات الضعيفة، رفع الإيجار — وأثر كلٍّ منها.</span></li>
+    </ul>
+  </div>
+  <div class="chat">
+    <div class="m u">ما وضع المحفظة هذا الشهر؟</div>
+    <div class="m b">المحفظة: 24 وحدة، إشغال 79%، قيمة 16.3 مليون.
+التحصيل هذا الشهر 91% — متأخرات 12,400 ر.س على 3 مستأجرين.
+يحتاج انتباهك: عقدان ينتهيان خلال 60 يومًا، و6 بلاغات صيانة مفتوحة.
+أول قرار: متابعة المتأخرات اليوم.</div>
+    <div class="m u">اكتب تذكير سداد لعبدالله</div>
+    <div class="m b">«السلام عليكم عبدالله، نود تذكيركم بأن إيجار شقة 6 بمبلغ 2,100 ر.س قد استحق…»</div>
+  </div>
+</div></section>
+
+<section class="alt"><div class="wrap">
+  <h2>أرقام تظهر تلقائيًا</h2><p class="sub">لا جداول إكسل ولا حسابات يدوية — كل مؤشر يُحسب من بياناتك الفعلية.</p>
+  <div class="stats"><div><b>12+</b><span>مؤشرًا في لوحة التحكم</span></div><div><b>7</b><span>تقارير جاهزة للطباعة</span></div><div><b>5</b><span>أنواع تنبيهات استباقية</span></div><div><b>100%</b><span>عربي RTL</span></div></div>
+</div></section>
+
+<section id="faq"><div class="wrap faq">
+  <h2>أسئلة شائعة</h2><p class="sub"></p>
+  <details open><summary>هل بياناتي آمنة؟</summary><p>النظام يعمل على خادمك الخاص وقاعدة بياناتك، ولا تُرسل بياناتك لأي طرف ثالث. كلمات المرور مشفّرة، وتستطيع تصدير نسخة احتياطية كاملة في أي وقت.</p></details>
+  <details><summary>هل يرتبط مع منصة إيجار؟</summary><p>تسجّل رقم عقد إيجار في كل عقد لربطه مرجعيًا. الربط البرمجي الكامل يتطلب موافقة إيجار على التكامل، والنظام مهيأ له.</p></details>
+  <details><summary>هل يعمل على الجوال؟</summary><p>نعم، الواجهة متجاوبة وتعمل على أي متصفح. تطبيقا Android وiOS في الطريق على نفس الحساب والبيانات.</p></details>
+  <details><summary>كيف يعمل المساعد الذكي؟</summary><p>يحلل بياناتك محليًا دون إنترنت، وعند تفعيل مفتاح Anthropic يتحول إلى مساعد Claude كامل يفهم أي سؤال عن محفظتك.</p></details>
+  <details><summary>هل أستطيع استيراد بياناتي القديمة؟</summary><p>نعم، من نسخة JSON أو من النسخة السابقة للنظام، ومن الإعدادات مباشرة.</p></details>
+</div></section>
+
+<section><div class="wrap"><div class="cta"><h2>ابدأ إدارة محفظتك اليوم</h2><p>أنشئ حسابك في دقيقة، وجرّب ببيانات تجريبية قبل إدخال بياناتك.</p><a class="btn lg" style="background:#fff;color:var(--brand)" href="login.html#register">إنشاء حساب مجاني</a></div></div></section>
+
+<footer><div class="wrap">🏠 محفظتي العقارية — نظام إدارة المحافظ العقارية المؤجرة · <a href="login.html">تسجيل الدخول</a></div></footer>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>تسجيل الدخول — محفظتي العقارية</title>
+<style>
+:root{--brand:#17305e;--brand2:#2d5bb3;--ink:#16213a;--muted:#5f6b80;--line:#e3e8f0;--bad:#c93838}
+*{box-sizing:border-box}body{margin:0;font-family:"Segoe UI",Tahoma,Arial,sans-serif;color:var(--ink);min-height:100vh;display:grid;grid-template-columns:1fr 1fr}
+.side{background:linear-gradient(160deg,#17305e,#2d5bb3);color:#fff;padding:50px;display:flex;flex-direction:column;justify-content:center}.side h1{font-size:34px;margin:0 0 12px}.side p{color:#d7e1f3;font-size:17px;max-width:420px}.side ul{list-style:none;padding:0;margin:24px 0 0;color:#e8eefb}.side li{padding:6px 0}.side .logo{font-size:40px;margin-bottom:10px}
+.box{display:flex;align-items:center;justify-content:center;padding:40px 20px;background:#f6f8fc}.form{background:#fff;border-radius:20px;padding:30px;width:min(420px,100%);box-shadow:0 10px 40px #0f1f4a14}
+.tabs{display:flex;background:#eef2f8;border-radius:12px;padding:4px;margin-bottom:20px}.tabs button{flex:1;border:0;background:transparent;padding:10px;border-radius:9px;font:inherit;cursor:pointer;color:var(--muted)}.tabs button.active{background:#fff;color:var(--brand);font-weight:700;box-shadow:0 2px 8px #0001}
+label{display:block;font-size:13px;color:var(--muted);margin:12px 0 4px}input{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font:inherit}input:focus{outline:2px solid #2d5bb355;border-color:var(--brand2)}
+.btn{width:100%;margin-top:18px;padding:13px;border:0;border-radius:12px;background:var(--brand2);color:#fff;font:inherit;font-weight:700;cursor:pointer}.btn:hover{background:var(--brand)}.btn:disabled{opacity:.6}
+.err{background:#fde3e3;color:var(--bad);padding:10px;border-radius:10px;font-size:13px;margin-top:12px;display:none}.note{font-size:12px;color:var(--muted);text-align:center;margin-top:14px}.note a{color:var(--brand2)}
+.demo{margin-top:18px;border-top:1px dashed var(--line);padding-top:14px}.demo-h{font-size:13px;font-weight:700;margin-bottom:8px}.demo button{display:flex;justify-content:space-between;align-items:center;width:100%;border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 12px;margin-bottom:6px;font:inherit;cursor:pointer;text-align:right}.demo button:hover{border-color:var(--brand2);background:#f3f6fb}.demo button span{font-size:11px;color:#fff;background:var(--brand2);border-radius:20px;padding:2px 8px}.demo .small{font-size:12px;color:var(--muted);margin-top:6px}code{background:#eef2f8;padding:1px 6px;border-radius:6px}
+.first{background:#eef6f2;border-right:3px solid #0f9d6e;padding:10px 12px;border-radius:10px;font-size:13px;margin-bottom:12px;display:none}
+@media(max-width:820px){body{grid-template-columns:1fr}.side{padding:30px 20px}.side h1{font-size:26px}}
+</style>
+</head>
+<body>
+<div class="side"><div class="logo">🏠</div><h1>محفظتي العقارية</h1><p>سجّل الدخول لمتابعة محفظتك، أو أنشئ حسابًا جديدًا وابدأ في دقيقة.</p><ul><li>✓ لوحة تحكم بـ 12 مؤشرًا</li><li>✓ عقود واستحقاقات تلقائية</li><li>✓ تنبيهات ومساعد ذكي</li><li>✓ تقارير جاهزة للطباعة</li></ul><p style="margin-top:30px;font-size:13px"><a href="index.html" style="color:#cfe0ff">← العودة للصفحة الرئيسية</a></p></div>
+<div class="box"><div class="form">
+  <div class="tabs"><button id="tLogin" class="active" onclick="mode('login')">تسجيل الدخول</button><button id="tReg" onclick="mode('register')">حساب جديد</button></div>
+  <div class="first" id="first">👋 أول مستخدم يُسجَّل يصبح <b>المالك</b> للنظام.</div>
+  <form id="f" onsubmit="submit_(event)">
+    <div id="regFields" style="display:none"><label>الاسم الكامل</label><input name="name" autocomplete="name"><label>الجوال (اختياري)</label><input name="phone" dir="ltr" style="text-align:right" autocomplete="tel"></div>
+    <label>البريد الإلكتروني</label><input name="email" type="email" required autocomplete="email" dir="ltr" style="text-align:right">
+    <label>كلمة المرور</label><input name="password" type="password" required minlength="6" autocomplete="current-password">
+    <div class="err" id="err"></div>
+    <button class="btn" id="go">دخول</button>
+  </form>
+  <div class="demo" id="demo" style="display:none"><div class="demo-h">🧪 حسابات تجريبية جاهزة — اضغط للدخول</div><div id="demoList"></div><div class="small">كلمة المرور لجميعها: <code id="demoPass"></code></div></div>
+  <div class="note" id="note">ليس لديك حساب؟ <a onclick="mode('register')" href="#register">أنشئ حسابًا</a></div>
+</div></div>
+<script>
+const API='api/index.php?r=';let m='login';
+function mode(x){m=x;document.getElementById('tLogin').classList.toggle('active',x==='login');document.getElementById('tReg').classList.toggle('active',x==='register');document.getElementById('regFields').style.display=x==='register'?'':'none';document.getElementById('go').textContent=x==='register'?'إنشاء الحساب':'دخول';document.getElementById('note').innerHTML=x==='register'?'لديك حساب؟ <a onclick="mode(\'login\')" href="#">سجّل الدخول</a>':'ليس لديك حساب؟ <a onclick="mode(\'register\')" href="#register">أنشئ حسابًا</a>';document.getElementById('err').style.display='none'}
+async function submit_(e){e.preventDefault();const b=document.getElementById('go');b.disabled=true;const o=Object.fromEntries(new FormData(e.target).entries());try{const r=await fetch(API+'auth/'+m,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(o)});const j=await r.json();if(!r.ok||j.error)throw new Error(j.error||'خطأ');location.href='app.html'}catch(x){const el=document.getElementById('err');el.textContent=x.message;el.style.display='block'}b.disabled=false}
+async function demoLogin(email,pass){mode('login');const f=document.getElementById('f');f.email.value=email;f.password.value=pass;f.requestSubmit()}
+(async()=>{try{const s=await fetch(API+'auth/status').then(r=>r.json());if(s.user){location.href='app.html';return}if(!s.has_users){document.getElementById('first').style.display='block';mode('register')}
+if(s.demo&&s.demo.length){document.getElementById('demo').style.display='block';document.getElementById('demoPass').textContent=s.demo_password;document.getElementById('demoList').innerHTML=s.demo.map(d=>`<button type="button" onclick="demoLogin('${d.email}','${s.demo_password}')"><b>${d.name}</b><span>${d.label}</span></button>`).join('')}}catch(_){}
+if(location.hash==='#register')mode('register')})();
+</script>
+</body>
+</html>
