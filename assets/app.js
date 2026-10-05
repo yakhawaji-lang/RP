@@ -71,17 +71,14 @@ function openDrawer(title, html) { $('#drawerTitle').textContent = title; $('#dr
 function closeDrawer() { $('#drawer').classList.remove('show'); }
 async function del(res, id, label = 'السجل') { if (!confirm(`حذف ${label}؟ لا يمكن التراجع.`)) return; await api(`${res}/${id}`, 'DELETE'); toast('تم الحذف'); go(view); }
 
-function drawBars(canvas, series, keys, colors) {
-  const c = canvas.getContext('2d'), W = canvas.width = canvas.clientWidth * 2, H = canvas.height = 440; c.scale(1, 1);
-  const max = Math.max(1, ...series.flatMap(s => keys.map(k => +s[k] || 0))); const pad = 40, bw = (W - pad * 2) / series.length;
-  c.font = '20px Tahoma'; c.textAlign = 'center';
-  series.forEach((s, i) => { keys.forEach((k, j) => { const h = (+s[k] || 0) / max * (H - 90); const x = W - pad - (i + 1) * bw + j * (bw / keys.length / 1.2) + 8; c.fillStyle = colors[j]; c.fillRect(x, H - 50 - h, bw / keys.length / 1.3, h); }); c.fillStyle = '#7a6c70'; c.fillText(s.month.slice(5), W - pad - (i + .5) * bw, H - 20); });
-}
-
 /* ---------- لوحة التحكم ---------- */
+const BAR_SETS = [{ key: 'due', label: 'المستحق', color: '#b07d12' }, { key: 'collected', label: 'المحصّل', color: '#0f9d6e' }, { key: 'expenses', label: 'المصروفات', color: '#c93838' }];
 const VIEWS = {};
 VIEWS.dashboard = async () => {
   const [s, alerts] = await Promise.all([api('stats'), api('alerts')]);
+  const unitItems = [{ label: 'مؤجرة', value: s.rented, color: '#0f9d6e' }, { label: 'شاغرة', value: s.vacant, color: '#d08a1a' }, { label: 'للبيع', value: s.for_sale, color: '#a8324a' }];
+  const rentYear = s.rent_month * 12, opex = s.expense_month * 12, debt = s.install_month * 12;
+  const rentItems = [{ label: 'مصروفات تشغيلية', value: Math.min(opex, rentYear), color: '#a8324a' }, { label: 'أقساط التمويل', value: Math.max(0, Math.min(debt, rentYear - opex)), color: '#d08a1a' }, { label: 'صافي التدفق النقدي', value: Math.max(0, rentYear - opex - debt), color: '#0f9d6e' }];
   $('#view').innerHTML = `
   <div class="grid">
     ${kpi('الوحدات', s.units, '', `${s.rented} مؤجرة · ${s.vacant} شاغرة · ${s.for_sale} للبيع`)}
@@ -98,14 +95,18 @@ VIEWS.dashboard = async () => {
     ${kpi('يحتاج انتباهك', s.expiring_60 + ' / ' + s.open_maintenance, s.expiring_60 + s.open_maintenance > 0 ? 'warn' : 'good', 'عقود تنتهي قريبًا / بلاغات مفتوحة')}
   </div>
   <div class="grid2" style="margin-top:14px">
-    <div class="card"><h3>التحصيل مقابل المستحق والمصروفات — 12 شهرًا</h3><canvas id="chart"></canvas><div class="small muted" style="display:flex;gap:14px;margin-top:8px"><span>■ <span style="color:#7a6c70">المستحق</span></span><span>■ <span style="color:#0f9d6e">المحصّل</span></span><span>■ <span style="color:#c93838">المصروفات</span></span></div></div>
+    <div class="card"><div class="toolbar" style="margin-bottom:6px"><h3 style="margin:0">التحصيل مقابل المستحق والمصروفات — 12 شهرًا</h3><span class="spacer"></span><button class="btn sm" onclick="const t=document.getElementById('chartTable'),c=document.getElementById('chart');const on=t.style.display==='none';t.style.display=on?'':'none';c.style.display=on?'none':'';this.textContent=on?'عرض كرسم':'عرض كجدول'">عرض كجدول</button></div><canvas id="chart"></canvas><div id="chartTable" style="display:none;max-height:300px;overflow:auto">${table(['الشهر', 'المستحق', 'المحصّل', 'المصروفات'], [...s.series].reverse(), r => `<tr><td>${r.month}</td><td class="num">${money(r.due)}</td><td class="num">${money(r.collected)}</td><td class="num">${money(r.expenses)}</td></tr>`)}</div>${chartLegend(BAR_SETS)}</div>
     <div class="card" id="alerts"><h3>التنبيهات (${alerts.length})</h3><div style="max-height:300px;overflow:auto">${alerts.length ? alerts.map(a => `<div class="alert ${a.level}" onclick="go('${a.link}')"><div><b>${a.type}</b><small>${esc(a.text)}</small></div></div>`).join('') : '<div class="empty">لا تنبيهات 🎉</div>'}</div></div>
+  </div>
+  <div class="grid2" style="margin-top:14px">
+    <div class="card"><h3>حالة الوحدات</h3><div class="chart-split"><canvas id="donutUnits"></canvas>${chartLegend(unitItems, { column: true, pct: true, unit: 'وحدة' })}</div></div>
+    <div class="card"><h3>أين يذهب الإيجار السنوي؟</h3><div class="chart-split"><canvas id="donutRent"></canvas>${chartLegend(rentItems, { column: true, pct: true, unit: 'ر.س' })}</div></div>
   </div>
   <div class="grid2" style="margin-top:14px">
     <div class="card"><h3>مرشحون للاستبدال (${s.replacement.length})</h3>${s.replacement.length ? s.replacement.slice(0, 6).map(r => `<div class="kv"><span><b>${esc(r.name)}</b> <span class="muted small">${r.reasons.join(' · ')}</span></span><span class="num">${r.yield}%</span></div>`).join('') : '<div class="empty">لا شيء وفق القاعدة الحالية</div>'}<button class="btn sm" style="margin-top:8px" onclick="go('growth')">عرض الكل</button></div>
     <div class="card"><h3>ملخص ذكي</h3><div id="aiSummary" class="muted">جارٍ التحليل…</div></div>
   </div>`;
-  drawBars($('#chart'), s.series, ['due', 'collected', 'expenses'], ['#9a8f92', '#0f9d6e', '#c93838']);
+  window.__charts = [chart3dBars($('#chart'), s.series, BAR_SETS), chart3dDonut($('#donutUnits'), unitItems, { unit: 'وحدة', center: s.occupancy + '%', centerSub: 'إشغال' }), chart3dDonut($('#donutRent'), rentItems, { unit: 'ر.س', center: rentYear ? Math.round(Math.max(0, rentYear - opex - debt) / rentYear * 100) + '%' : '—', centerSub: 'صافٍ' })];
   api('assistant', 'POST', { q: 'ملخص المحفظة' }).then(r => $('#aiSummary').innerHTML = `<div style="white-space:pre-wrap;line-height:1.7;color:var(--ink)">${esc(r.answer)}</div>`).catch(() => { });
 };
 
